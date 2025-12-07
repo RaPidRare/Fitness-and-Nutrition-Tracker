@@ -19,6 +19,7 @@ CREATE TABLE users (
     gender      VARCHAR(20),
     height_cm   DECIMAL(5,2),
     weight_kg   DECIMAL(6,2),
+    bmi         DECIMAL(5,2),
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
