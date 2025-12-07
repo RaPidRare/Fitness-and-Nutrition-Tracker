@@ -35,10 +35,10 @@ def register():
     name = input("Name: ").strip()
     email = input("Email: ").strip()
     password = getpass.getpass("Password: ")
-    age = input("Age: ").strip()
+    age = int(input("Age: ").strip())
     gender = input("Gender: ").strip()
-    height_cm = input("Height (cm): ").strip()
-    weight_kg = input("Weight (kg): ").strip() 
+    height_cm = int(input("Height (cm): ").strip())
+    weight_kg = int(input("Weight (kg): ").strip()) 
     bmi = weight_kg / height_cm / height_cm * 10000
 
     with get_connection() as conn, conn.cursor(cursor_factory=DictCursor) as cur:
