@@ -9,7 +9,7 @@ from psycopg2.extras import DictCursor
 
 DB_NAME = "fitness_tracker"
 DB_USER = "postgres"   # change to match run.sh
-DB_PASSWORD = "saimanish123"       # fill in if needed
+DB_PASSWORD = "1305"       # fill in if needed
 DB_HOST = "localhost"
 DB_PORT = "5432"
 

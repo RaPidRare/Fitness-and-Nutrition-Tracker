@@ -111,3 +111,69 @@ CREATE TABLE meal_foods (
         FOREIGN KEY (food_id) REFERENCES foods(id)
         ON DELETE RESTRICT
 );
+
+-- SAMPLE DATA
+
+INSERT INTO users (name, age, gender, height_cm, weight_kg, bmi)
+VALUES ('Demo User', 20, 'M', 178, 76, ROUND(76/(178*178)*10000,2));
+
+INSERT INTO user_profiles (user_id, email, password_hash)
+VALUES (
+  (SELECT id FROM users WHERE name = 'Demo User'),
+  'demo@example.com',
+  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f'
+);
+
+INSERT INTO exercises (exercise_name, category, muscle_group, equipment) VALUES
+('Bench Press','Strength','Chest','Barbell'),
+('Squat','Strength','Legs','Barbell'),
+('Running','Cardio','Full Body','Treadmill');
+
+INSERT INTO foods (food_name, serving_size, calories_per_serv, protein_g, carbs_g, fats_g) VALUES
+('Chicken Breast','100g',165,31,0,3.6),
+('White Rice','1 cup (158g)',205,4.3,44.5,0.4),
+('Olive Oil','1 tbsp',119,0,0,13.5);
+
+INSERT INTO workout_logs (user_id, workout_type, duration_min, intensity, calories_burned, workout_date)
+VALUES (
+  (SELECT id FROM users WHERE name = 'Demo User'),
+  'Upper Body', 45, 'Moderate', 350, CURRENT_DATE
+);
+
+INSERT INTO workout_exercises (workout_id, exercise_id, sets, reps, weight_used_kg)
+VALUES (
+  (SELECT id FROM workout_logs WHERE user_id = (SELECT id FROM users WHERE name = 'Demo User') ORDER BY id DESC LIMIT 1),
+  (SELECT id FROM exercises WHERE exercise_name = 'Bench Press'),
+  4, 8, 60
+);
+
+INSERT INTO meal_logs (user_id, meal_type, meal_date)
+VALUES (
+  (SELECT id FROM users WHERE name = 'Demo User'),
+  'Lunch',
+  CURRENT_DATE
+);
+
+INSERT INTO meal_foods (meal_id, food_id, quantity) VALUES
+(
+  (SELECT id FROM meal_logs WHERE user_id = (SELECT id FROM users WHERE name = 'Demo User') ORDER BY id DESC LIMIT 1),
+  (SELECT id FROM foods WHERE food_name = 'Chicken Breast'),
+  2.0
+);
+
+UPDATE meal_logs ml
+SET calories  = sub.total_cal,
+    protein_g = sub.total_protein,
+    carbs_g   = sub.total_carbs,
+    fats_g    = sub.total_fats
+FROM (
+  SELECT mf.meal_id,
+         SUM(f.calories_per_serv * mf.quantity) AS total_cal,
+         SUM(f.protein_g * mf.quantity)        AS total_protein,
+         SUM(f.carbs_g * mf.quantity)          AS total_carbs,
+         SUM(f.fats_g * mf.quantity)           AS total_fats
+  FROM meal_foods mf
+  JOIN foods f ON f.id = mf.food_id
+  GROUP BY mf.meal_id
+) sub
+WHERE ml.id = sub.meal_id;
