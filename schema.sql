@@ -112,7 +112,7 @@ CREATE TABLE meal_foods (
         ON DELETE RESTRICT
 );
 
--- SAMPLE DATA
+-- SAMPLE DATA ------------------------------------------------------
 
 INSERT INTO users (name, age, gender, height_cm, weight_kg, bmi)
 VALUES ('Demo User', 20, 'M', 178, 76, ROUND(76/(178*178)*10000,2));
